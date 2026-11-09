@@ -2,7 +2,7 @@ import time
 import telebot
 from telebot import types
 
-TOKEN = 9071693829:AAEtdXHthc2QtfpnbyId-s9niF-6vgreXss
+TOKEN = "9071693829:AAEtdXHthc2QtfpnbyId-s9niF-6vgreXss"
 CHANNEL_USERNAME = "@UzbekHamkorlar"
 
 bot = telebot.TeleBot(TOKEN)
