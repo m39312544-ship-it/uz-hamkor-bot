@@ -2,7 +2,7 @@ import telebot
 from telebot import types
 
 # Tokeningiz
-TOKEN = "9071693829:AAetdXHthc2QtfpnbyId-s9niF-6vgreXss"
+TOKEN = "9071693829:AAGOFQmXUl_zKCQOUZ01M3HYbxrH86Gxq2I"
 bot = telebot.TeleBot(TOKEN)
 
 # Vaqtinchalik baza (foydalanuvchilar, balans va referallar uchun)
