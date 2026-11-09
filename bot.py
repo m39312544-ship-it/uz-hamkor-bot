@@ -1,7 +1,6 @@
 import telebot
-from telebot import types
-
-TOKEN = "9071693829:AAELOsEqtas9Ulipp8BkaR6oz-u3ZL-7u0Y"
+from telebot import types"
+TOKEN="9071693829:AAFp8w-XdMWTMdrGafTLIxqLRnSMMxdVoLk"
 bot = telebot.TeleBot(TOKEN)
 
 users_db = {}
