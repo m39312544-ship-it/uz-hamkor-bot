@@ -1,6 +1,7 @@
 import telebot
 from telebot import types
-TOKEN="9071693829:AAFp8w-XdMWTMdrGafTLIxqLRnSMMxdVoLk"
+
+TOKEN = "9071693829:AAECdwtvKxYz9HEj5hAnI4s8togFB1qJD6M"
 bot = telebot.TeleBot(TOKEN)
 
 users_db = {}
@@ -59,7 +60,7 @@ def show_main_menu(chat_id):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     markup.add(types.KeyboardButton("💰 Balansim"), types.KeyboardButton("🔗 Referal havola"))
     markup.add(types.KeyboardButton("💸 Pul chiqarish"), types.KeyboardButton("ℹ️ Ma'lumot"))
-    markup.add(types.KeyboardButton("☎️ Aloqa / Admin"))
+    markup.add(types.KeyboardButton("🚀 Pullik Xizmatlar & Reklama"))
     bot.send_message(chat_id, "Asosiy menyuga xush kelibsiz! Kerakli bo'limni tanlang:", reply_markup=markup)
 
 @bot.message_handler(func=lambda message: True)
@@ -89,10 +90,17 @@ def handle_messages(message):
             bot.register_next_step_handler(message, process_withdraw)
 
     elif text == "ℹ️ Ma'lumot":
-        bot.reply_to(message, "ℹ️ Bu bot do'stlaringizni taklif qilish orqali pul ishlash va xizmatlardan foydalanish uchun mo'ljallangan platforma.")
+        bot.reply_to(message, "ℹ️ Bu bot orqali siz ham pul topishingiz, ham pullik xizmatlar orqali biznesingizni rivojlantirishingiz mumkin.")
 
-    elif text == "☎️ Aloqa / Admin":
-        bot.reply_to(message, "📞 Savollar bo'yicha murojaat qiling: @Admin_Username")
+    elif text == "🚀 Pullik Xizmatlar & Reklama":
+        paid_text = (
+            "🚀 **Pullik Xizmatlar va Tezkor Daromad**\n\n"
+            "Haqiqiy sarmoya kiritib, tezroq natija ko'rishni istaganlar uchun:\n\n"
+            "1️⃣ **Botda Reklama Joylash:** Botimiz orqali o'z kanalingiz yoki mahsulotingizni minglab foydalanuvchilarga reklama qiling.\n"
+            "2️⃣ **Pullik AI Video Buyurtma:** Premium dasturlar (ElevenLabs, CapCut Pro) orqali professional videolar tayyorlab berish xizmati.\n\n"
+            "📞 Buyurtma berish va narxlar bo'yicha admin bilan bog'lanish: @Admin_Username"
+        )
+        bot.reply_to(message, paid_text, parse_mode="Markdown")
 
     elif text.startswith("/admin"):
         total_users = len(users_db)
@@ -115,4 +123,4 @@ def process_withdraw(message):
 if __name__ == "__main__":
     print("Bot ishga tushdi...")
     bot.infinity_polling(timeout=60, long_polling_timeout=60)
-                                       
+    
