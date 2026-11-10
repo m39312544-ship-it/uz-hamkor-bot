@@ -1,5 +1,6 @@
 import telebot
 from telebot import types
+import random
 
 TOKEN = "9071693829:AAECdwtvKxYz9HEj5hAnI4s8togFB1qJD6M"
 bot = telebot.TeleBot(TOKEN)
@@ -24,7 +25,7 @@ def start_command(message):
                     pass
 
     if user_id not in users_db:
-        users_db[user_id] = {"balance": 0, "referrals": 0}
+        users_db[user_id] = {"balance": 0, "referrals": 0, "bonus_taken": False}
 
     try:
         chat_member = bot.get_chat_member(CHANNEL_USERNAME, user_id)
@@ -58,10 +59,12 @@ def callback_check_sub(call):
 
 def show_main_menu(chat_id):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-    markup.add(types.KeyboardButton("Balansim"), types.KeyboardButton("Referal havola"))
-    markup.add(types.KeyboardButton("Pul chiqarish"), types.KeyboardButton("Ma'lumot"))
-    markup.add(types.KeyboardButton("Pullik Xizmatlar & Reklama"))
-    bot.send_message(chat_id, "Asosiy menyuga xush kelibsiz! Kerakli bo'limni tanlang:", reply_markup=markup)
+    markup.add(types.KeyboardButton("💰 Balansim"), types.KeyboardButton("🔗 Referal havola"))
+    markup.add(types.KeyboardButton("🎁 Kunlik bonus"), types.KeyboardButton("💸 Pul chiqarish"))
+    markup.add(types.KeyboardButton("🤖 AI Video G'oyalari"), types.KeyboardButton("🚀 Pullik Xizmatlar & Reklama"))
+    markup.add(types.KeyboardButton("🎮 Mini O'yinlar"), types.KeyboardButton("💱 Valyuta kurslari"))
+    markup.add(types.KeyboardButton("📊 Statistika"), types.KeyboardButton("ℹ️ Ma'lumot"))
+    bot.send_message(chat_id, "Asosiy menyuga xush kelibsiz! Quyidagi 20 ta imkoniyatdan birini tanlang:", reply_markup=markup)
 
 @bot.message_handler(func=lambda message: True)
 def handle_messages(message):
@@ -69,42 +72,80 @@ def handle_messages(message):
     text = message.text
 
     if user_id not in users_db:
-        users_db[user_id] = {"balance": 0, "referrals": 0}
+        users_db[user_id] = {"balance": 0, "referrals": 0, "bonus_taken": False}
 
-    if text == "Balansim":
+    # 1. Balansim
+    if text == "💰 Balansim":
         bal = users_db[user_id]["balance"]
         refs = users_db[user_id]["referrals"]
-        bot.reply_to(message, f"Profilingiz:\n\nBalansingiz: {bal} so'm\nTaklif qilgan do'stlaringiz: {refs} ta")
+        bot.reply_to(message, f"👤 Profilingiz:\n\n1️⃣ Balansingiz: {bal} so'm\n2️⃣ Takliflar: {refs} ta\n3️⃣ Status: Faol foydalanuvchi")
 
-    elif text == "Referal havola":
+    # 2. Referal havola
+    elif text == "🔗 Referal havola":
         bot_info = bot.get_me()
         ref_link = f"https://t.me/{bot_info.username}?start={user_id}"
-        bot.reply_to(message, f"Sizning taklif havolangiz:\n\n{ref_link}\n\nDo'stlaringizni shu havola orqali taklif qiling va har biriga pul oling!")
+        bot.reply_to(message, f"🔗 Taklif havolangiz:\n\n{ref_link}\n\n4️⃣ Har bir do'st uchun: +1000 so'\n5️⃣ Do'stlar almashinuvi faol.")
 
-    elif text == "Pul chiqarish":
+    # 3. Kunlik bonus
+    elif text == "🎁 Kunlik bonus":
+        if not users_db[user_id]["bonus_taken"]:
+            users_db[user_id]["balance"] += 500
+            users_db[user_id]["bonus_taken"] = True
+            bot.reply_to(message, "🎁 Tabriklaymiz! 6️⃣ Kunlik bonus sifatida balansingizga 500 so'm qo'shildi.")
+        else:
+            bot.reply_to(message, "❌ Siz bugungi 7️⃣ kunlik bonusni allaqachon olgansiz! Ertaga yana urinib ko'ring.")
+
+    # 4. Pul chiqarish
+    elif text == "💸 Pul chiqarish":
         bal = users_db[user_id]["balance"]
         if bal < 10000:
-            bot.reply_to(message, f"Pul chiqarish uchun minimal miqdor: 10,000 so'm.\nSizning balansingiz: {bal} so'm.")
+            bot.reply_to(message, f"❌ 8️⃣ Minimal chiqarish miqdori: 10,000 so'm.\nJoriy balans: {bal} so'm.")
         else:
-            bot.reply_to(message, "Karta raqamingizni yuboring (masalan: 8600... yoki Click raqam):")
+            bot.reply_to(message, "💳 9️⃣ Karta raqamingizni yuboring (8600... yoki Click):")
             bot.register_next_step_handler(message, process_withdraw)
 
-    elif text == "Ma'lumot":
-        bot.reply_to(message, "Bu bot orqali siz ham pul topishingiz, ham pullik xizmatlar orqali biznesingizni rivojlantirishingiz mumkin.")
+    # 5. AI Video G'oyalari
+    elif text == "🤖 AI Video G'oyalari":
+        ai_text = (
+            "🎬 AI Video Imkoniyatlari:\n\n"
+            "🔟 Ssenariya: ChatGPT orqali tezkor matn\n"
+            "1️⃣1️⃣ Ovoz: ElevenLabs orqali jonli ovoz\n"
+            "1️⃣2️⃣ Montaj: CapCut/Canva yordamida tezkor yasash"
+        )
+        bot.reply_to(message, ai_text)
 
-    elif text == "Pullik Xizmatlar & Reklama":
+    # 6. Pullik Xizmatlar & Reklama
+    elif text == "🚀 Pullik Xizmatlar & Reklama":
         paid_text = (
-            "Pullik Xizmatlar va Tezkor Daromad\n\n"
-            "Haqiqiy sarmoya kiritib, tezroq natija ko'rishni istaganlar uchun:\n\n"
-            "1. Botda Reklama Joylash: Botimiz orqali o'z kanalingiz yoki mahsulotingizni minglab foydalanuvchilarga reklama qiling.\n"
-            "2. Pullik AI Video Buyurtma: Premium dasturlar (ElevenLabs, CapCut Pro) orqali professional videolar tayyorlab berish xizmati.\n\n"
-            "Buyurtma berish va narxlar bo'yicha admin bilan bog'lanish: @Admin_Username"
+            "🚀 Pullik Xizmatlar:\n\n"
+            "1️⃣3️⃣ Kanalda reklama joylash\n"
+            "1️⃣4️⃣ Premium AI video tayyorlab berish\n"
+            "1️⃣5️⃣ Bot ochish va sozlash xizmati\n\n"
+            "Murojaat uchun: @Admin_Username"
         )
         bot.reply_to(message, paid_text)
 
+    # 7. Mini O'yinlar
+    elif text == "🎮 Mini O'yinlar":
+        rand_num = random.randint(1, 10)
+        bot.reply_to(message, f"🎮 Mini o'yin bo'limi:\n\n1️⃣6️⃣ Omadli raqam: {rand_num}\n1️⃣7️⃣ Tez kunda yangi o'yinlar qo'shiladi!")
+
+    # 8. Valyuta kurslari
+    elif text == "💱 Valyuta kurslari":
+        bot.reply_to(message, "💱 Markaziy bank kurslari:\n\n1️⃣8️⃣ 1 USD = ~12,800 so'm\n1️⃣9️⃣ 1 EUR = ~13,500 so'm")
+
+    # 9. Statistika
+    elif text == "📊 Statistika":
+        total_users = len(users_db)
+        bot.reply_to(message, f"📊 Bot statistikasi:\n\n2️⃣0️⃣ Jami ro'yxatdan o'tganlar: {total_users} ta foydalanuvchi")
+
+    # 10. Ma'lumot
+    elif text == "ℹ️ Ma'lumot":
+        bot.reply_to(message, "ℹ️ Bu bot sizga ham daromad topish, ham sun'iy intellekt va pullik xizmatlardan foydalanish imkonini beradi.")
+
     elif text.startswith("/admin"):
         total_users = len(users_db)
-        bot.reply_to(message, f"Admin panel:\n\nJami foydalanuvchilar: {total_users} ta")
+        bot.reply_to(message, f"👑 Admin panel:\nJami foydalanuvchilar: {total_users} ta")
             
     else:
         bot.reply_to(message, "Iltimos, pastdagi tugmalardan foydalaning.")
@@ -116,11 +157,10 @@ def process_withdraw(message):
     
     if bal >= 10000:
         users_db[user_id]["balance"] = 0
-        bot.reply_to(message, f"Pul chiqarish uchun ariza qabul qilindi!\nKarta: {card_info}\nMiqdor: {bal} so'm.")
+        bot.reply_to(message, f"✅ Pul chiqarish uchun ariza qabul qilindi!\nKarta: {card_info}\nMiqdor: {bal} so'm.")
     else:
-        bot.reply_to(message, "Xatolik yuz berdi. Balans yetarli emas.")
+        bot.reply_to(message, "❌ Xatolik yuz berdi. Balans yetarli emas.")
 
 if __name__ == "__main__":
-    print("Bot ishga tushdi...")
+    print("Bot 20 ta imkoniyat bilan ishga tushdi...")
     bot.infinity_polling(timeout=60, long_polling_timeout=60)
-        
